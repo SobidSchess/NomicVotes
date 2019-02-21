@@ -32,6 +32,15 @@ bot.on('message', function(user, userID, channelID, message, event) {
 				} else {
 					votes[userID] = votes[userID] + separator + args[0];
 				}
+				
+				if (!votes[userID]) {
+					votes[userID] = {};
+				}
+                if (args[1]) {
+					votes[userID][args[0]] = args[1];
+				} else {
+					votes[userID].current = args[0];
+				}
 				bot.sendMessage({
 					to: channelID,
 					message: votes[userID]
@@ -39,7 +48,7 @@ bot.on('message', function(user, userID, channelID, message, event) {
 				break;
 				
 			case 'deleteVote':
-				delete votes.userID;
+				delete votes[userID];
 				bot.sendMessage({
 					to: channelID,
 					message: "Deleted votes for " + user
