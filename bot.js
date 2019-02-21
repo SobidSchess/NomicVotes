@@ -94,19 +94,19 @@ bot.on('message', function(user, userID, channelID, message, event) {
                     break;
 
                 case 'whohasvoted':
-                    var whoHasVotedMessage = "Who has voted on what topics:\n" + getAllTopicVotes(false);
+                    var whoHasVotedMessage = "Who has voted on what topics:\n";
                     bot.sendMessage({
                         to: channelID,
-                        message: whoHasVotedMessage
+                        message: getAllTopicVotes(whoHasVotedMessage, false)
                     });
                     break;
 
                 case 'revealallvotesforalltopics':
                     if (mainChannel === channelID) {
-                        var revealAllVotesString = "Revealing votes!\n" + getAllTopicVotes(true);
+                        var revealAllVotesString = "Revealing votes!\n";
                         bot.sendMessage({
                             to: mainChannel,
-                            message: revealAllVotesString
+                            message: getAllTopicVotes(revealAllVotesString, true)
                         });
                     } else {
                         bot.sendMessage({
