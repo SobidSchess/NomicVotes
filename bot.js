@@ -1,6 +1,6 @@
 var Discord = require('discord.io-gateway6');
 var auth = require('./auth.json');
- 
+
 var bot = new Discord.Client({
     token: auth.token,
     autorun: true
@@ -8,110 +8,188 @@ var bot = new Discord.Client({
 
 var votes = {};
 var mainChannel;
- 
+
+function getUserVoteOnTopic(userID, topicKey, includeVote) {
+    var result = votes[userID].user + ": " + votes[userID].topics[topicKey].timestamp;
+    if (includeVote) {
+        result = result + " " + topicKey + ":" + votes[userID].topics[topicKey].vote;
+    }
+    result = result + "\n";
+    return result;
+}
+
+function getUserVotes(userID) {
+    var voteString = user + " votes:\n";
+    for (var topicKey in votes[userID].topics) {
+        voteString = voteString + getUserVoteOnTopic(userID, topicKey, true)
+    }
+    return voteString;
+}
+
+function getTopicVotes(topicKey, messageString, includeVotes) {
+    messageString = messageString + "Votes on " + topicKey + ":\n";
+    for (var userKey in votes) {
+        if (votes[userKey].topics[topicKey]) {
+            messageString = messageString + getUserVoteOnTopic(userKey, topicKey, includeVotes);
+        }
+    }
+    return messageString;
+}
+
+function getAllTopicVotes(messageString, includeVotes) {
+    var completedTopics = [];
+    for (var userKey in votes) {
+        for (var topicKey in votes[userKey]) {
+            if (!completedTopics.includes(topicKey)) {
+                messageString = messageString + getTopicVotes(topicKey, messageString, includeVotes);
+                completedTopics.push(topicKey);
+            }
+        }
+    }
+    return messageString;
+}
+
 bot.on('ready', function() {
     console.log('Logged in as %s - %s\n', bot.username, bot.id);
 });
- 
+
 bot.on('message', function(user, userID, channelID, message, event) {
-	if (message.substring(0, 1) == '!') {
-        var args = message.substring(1).split(' ');
-        var cmd = args[0];
+    try {
+        if (message.substring(0, 1) == '!') {
+            var args = message.substring(1).split(' ');
+            var cmd = args[0].toLowerCase();
 
-        args = args.splice(1);
-        switch(cmd) {
-            case 'vote':
-				var separator = ":  ";
-				if (!votes[userID]) {
-					votes[userID] = user + " votes";
-				} else {
-					separator = "; ";
-				}
-                if (args[1]) {
-					votes[userID] = votes[userID] + separator + args[0] + ":" + args[1];
-				} else {
-					votes[userID] = votes[userID] + separator + args[0];
-				}
-				
-				if (!votes[userID]) {
-					votes[userID] = {};
-				}
-                if (args[1]) {
-					votes[userID][args[0]] = args[1];
-				} else {
-					votes[userID].current = args[0];
-				}
-				bot.sendMessage({
-					to: channelID,
-					message: votes[userID]
-				});
-				break;
-				
-			case 'deleteVote':
-				delete votes[userID];
-				bot.sendMessage({
-					to: channelID,
-					message: "Deleted votes for " + user
-				});
-				break;
-				
-			case 'deleteAllVotes':
-				if (mainChannel === channelID) {
-					votes = {};
-					bot.sendMessage({
-						to: mainChannel,
-						message: "Deleted all votes"
-					});
-				} else {
-					bot.sendMessage({
-						to: mainChannel,
-						message: "Can only delete all votes in the main channel, " + user
-					});
-				}
-				break;
-				
-			case 'reveal':
-				if (mainChannel === channelID) {
-					var voteString = "Revealing votes!\n"
-					for (var userKey in votes) {
-											console.log('here3');
-						voteString = voteString + votes[userKey] + "\n";
-					}
-					bot.sendMessage({
-						to: mainChannel,
-						message: voteString
-					});
-				} else {
-					bot.sendMessage({
-						to: mainChannel,
-						message: "Votes reveals are only in the main channel, " + user
-					});
-				}
-				break;
-				
-			case 'setMain':
-				var message = "Setting main channel to " + channelID
-				if (mainChannel) {
-					bot.sendMessage({
-						to: channelID,
-						message: "Main channel is already set to " + mainChannel
-					});
-				} else {
-					bot.sendMessage({
-						to: channelID,
-						message: "Setting main channel to " + channelID
-					});
-					mainChannel = channelID
-				}
-				break;
-				
-			case 'testMain':
-				bot.sendMessage({
-					to: channelID,
-					message: mainChannel === channelID ? "This is the main channel" : "This is not the main channel"
-				});
-				break;
+            args = args.splice(1);
+            switch (cmd) {
+                case 'vote':
+                    if (!votes[userID]) {
+                        votes[userID].topics = {};
+                        votes[userID].user = user;
+                    }
+                    if (args[1]) {
+                        votes[userID].topics[args[0]].vote = args[1];
+                        votes[userID].topics[args[0]].timestamp = Date.now.toLocaleString();
+                    } else {
+                        votes[userID].topics.current.vote = args[0];
+                        votes[userID].topics.current.timestamp = Date.now.toLocaleString();
+                    }
+                    bot.sendMessage({
+                        to: channelID,
+                        message: getUserVotes(userID, user)
+                    });
+                    break;
 
-         }
-     }
+                case 'myvotes':
+                    bot.sendMessage({
+                        to: channelID,
+                        message: getUserVotes(userID, user)
+                    });
+                    break;
+
+                case 'whohasvoted':
+                    var whoHasVotedMessage = "Who has voted on what topics:\n" + getAllTopicVotes(false);
+                    bot.sendMessage({
+                        to: channelID,
+                        message: whoHasVotedMessage
+                    });
+                    break;
+
+                case 'revealallvotesforalltopics':
+                    if (mainChannel === channelID) {
+                        var revealAllVotesString = "Revealing votes!\n" + getAllTopicVotes(true);
+                        bot.sendMessage({
+                            to: mainChannel,
+                            message: revealAllVotesString
+                        });
+                    } else {
+                        bot.sendMessage({
+                            to: channelID,
+                            message: "Votes reveals are only in the main channel"
+                        });
+                    }
+                    break;
+
+                case 'revealallvotesfortopic':
+                    var revealTopic = args[0];
+                    if (args[0]) {
+                        if (mainChannel === channelID) {
+                            var revealAllVotesForTopicString = "Revealing votes for " + revealTopic + "!\n";
+                            bot.sendMessage({
+                                to: mainChannel,
+                                message: getTopicVotes(revealTopic, revealAllVotesForTopicString, true)
+                            });
+                        } else {
+                            bot.sendMessage({
+                                to: channelID,
+                                message: "Votes reveals are only in the main channel"
+                            });
+                        }
+                    } else {
+                        bot.sendMessage({
+                            to: channelID,
+                            message: "Need to provide a topic, for example: !revealAllVotesForTopic current"
+                        });
+                    }
+                    break;
+
+                case 'deletevote':
+                    delete votes[userID];
+                    bot.sendMessage({
+                        to: channelID,
+                        message: "Deleted votes for " + user
+                    });
+                    break;
+
+                case 'deleteallvotes':
+                    if (mainChannel === channelID) {
+                        votes = {};
+                        bot.sendMessage({
+                            to: mainChannel,
+                            message: "Deleted all votes for all users"
+                        });
+                    } else {
+                        bot.sendMessage({
+                            to: channelID,
+                            message: "Can only delete all votes in the main channel"
+                        });
+                    }
+                    break;
+
+                case 'setmain':
+                    if (mainChannel) {
+                        bot.sendMessage({
+                            to: channelID,
+                            message: "Main channel is already set to " + mainChannel
+                        });
+                    } else {
+                        bot.sendMessage({
+                            to: channelID,
+                            message: "Setting main channel to " + channelID
+                        });
+                        mainChannel = channelID
+                    }
+                    break;
+
+                case 'testmain':
+                    bot.sendMessage({
+                        to: channelID,
+                        message: mainChannel === channelID ? "This is the main channel" : "This is not the main channel"
+                    });
+                    break;
+
+                case 'reassure':
+                    bot.sendMessage({
+                        to: channelID,
+                        message: "You made the right choice!"
+                    });
+                    break;
+
+
+            }
+        }
+    } catch (err) {
+        console.log("Error! ");
+        console.log(Date.now.toLocaleString());
+        console.log(err);
+    }
 });
