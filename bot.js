@@ -19,7 +19,7 @@ function getUserVoteOnTopic(userID, topicKey, includeVote) {
 }
 
 function getUserVotes(userID) {
-    var voteString = user + " votes:\n";
+    var voteString = votes[userID].user + " votes:\n";
     for (var topicKey in votes[userID].topics) {
         voteString = voteString + getUserVoteOnTopic(userID, topicKey, true)
     }
@@ -82,14 +82,14 @@ bot.on('message', function(user, userID, channelID, message, event) {
                     }
                     bot.sendMessage({
                         to: channelID,
-                        message: getUserVotes(userID, user)
+                        message: getUserVotes(userID)
                     });
                     break;
 
                 case 'myvotes':
                     bot.sendMessage({
                         to: channelID,
-                        message: getUserVotes(userID, user)
+                        message: getUserVotes(userID)
                     });
                     break;
 
