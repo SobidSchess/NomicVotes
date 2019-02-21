@@ -21,7 +21,7 @@ function getUserVoteOnTopic(userID, topicKey, includeVote) {
 function getUserVotes(userID) {
     var voteString = "You have no votes saved";
     if (votes[userID]) {
-        voteString = votes[userID].user + " votes:\n";
+        voteString = votes[userID].user + " votes (timestamp; topic: vote):\n";
         for (var topicKey in votes[userID].topics) {
             voteString = voteString + getUserVoteOnTopic(userID, topicKey, true)
         }
@@ -44,12 +44,18 @@ function getAllTopicVotes(messageString, includeVotes) {
     for (var userKey in votes) {
         for (var topicKey in votes[userKey].topics) {
             if (!completedTopics.includes(topicKey)) {
-                messageString = getTopicVotes(topicKey, messageString, includeVotes);
+                messageString = getTopicVotes(topicKey, messageString, includeVotes) + "\n";
                 completedTopics.push(topicKey);
             }
         }
     }
     return messageString;
+}
+
+function deleteTopicVotes(deleteTopic) {
+    for (var userKey in votes) {
+        delete votes[userKey].topics[deleteTopic];
+    }
 }
 
 bot.on('ready', function() {
@@ -150,24 +156,56 @@ bot.on('message', function(user, userID, channelID, message, event) {
                     break;
 
                 case 'deletevote':
-                    delete votes[userID];
-                    bot.sendMessage({
-                        to: channelID,
-                        message: "Deleted votes for " + user
-                    });
+                    var deleteUserTopic = args[0];
+                    if (args[0]) {
+                        delete votes[userID].topics[deleteUserTopic];
+                        bot.sendMessage({
+                            to: channelID,
+                            message: "Deleted vote for " + deleteUserTopic + " for " + user
+                        });
+                    } else {
+                        delete votes[userID];
+                        bot.sendMessage({
+                            to: channelID,
+                            message: "Deleted all votes for " + user
+                        });
+                    }
                     break;
 
-                case 'deleteallvotes':
+                case 'deleteallvotesforalltopics':
                     if (mainChannel === channelID) {
                         votes = {};
                         bot.sendMessage({
                             to: mainChannel,
-                            message: "Deleted all votes for all users"
+                            message: "Deleted all votes for all topics and all users"
                         });
                     } else {
                         bot.sendMessage({
                             to: channelID,
                             message: "Can only delete all votes in the main channel"
+                        });
+                    }
+                    break;
+
+                case 'deleteallvotesfortopic':
+                    var deleteTopic = args[0];
+                    if (args[0]) {
+                        if (mainChannel === channelID) {
+                            deleteTopicVotes(deleteTopic);
+                            bot.sendMessage({
+                                to: mainChannel,
+                                message: "Deleted all votes for topic " + deleteTopic + " for all users"
+                            });
+                        } else {
+                            bot.sendMessage({
+                                to: channelID,
+                                message: "Can only delete all votes in the main channel"
+                            });
+                        }
+                    } else {
+                        bot.sendMessage({
+                            to: channelID,
+                            message: "Need to provide a topic, for example: !deleteallvotesfortopic current"
                         });
                     }
                     break;
