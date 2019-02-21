@@ -74,11 +74,11 @@ bot.on('message', function(user, userID, channelID, message, event) {
                     if (args[1]) {
                         votes[userID].topics[args[0]] = {};
                         votes[userID].topics[args[0]].vote = args[1];
-                        votes[userID].topics[args[0]].timestamp = new Date().toLocaleTimeString();
+                        votes[userID].topics[args[0]].timestamp = new Date().toLocaleString();
                     } else {
                         votes[userID].topics.current = {};
                         votes[userID].topics.current.vote = args[0];
-                        votes[userID].topics.current.timestamp = new Date().toLocaleTimeString();
+                        votes[userID].topics.current.timestamp = new Date().toLocaleString();
                     }
                     bot.sendMessage({
                         to: channelID,
