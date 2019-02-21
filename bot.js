@@ -8,7 +8,8 @@ var bot = new Discord.Client({
 
 var votes = {};
 var mainChannel;
-var help = "Enter this message to vote yes:\n!vote yes\nOr to vote no:\n!vote no\n\nTo see your current votes, use:\n!myVotes\n\nFor more detail, go to " +
+var defaultTopic = 'default';
+var help = "Enter this message to vote yes:\n!vote yes\nOr to vote no:\n!vote no\n\nTo see your votes, use:\n!myVotes\n\nFor more detail, go to " +
     "the README on this page: https://github.com/SobidSchess/NomicVotes/blob/master/README.md";
 
 
@@ -90,9 +91,9 @@ bot.on('message', function(user, userID, channelID, message, event) {
                             votes[userID].topics[args[0]].vote = args[1];
                             votes[userID].topics[args[0]].timestamp = new Date().toLocaleString();
                         } else {
-                            votes[userID].topics.current = {};
-                            votes[userID].topics.current.vote = args[0];
-                            votes[userID].topics.current.timestamp = new Date().toLocaleString();
+                            votes[userID].topics[defaultTopic] = {};
+                            votes[userID].topics[defaultTopic].vote = args[0];
+                            votes[userID].topics[defaultTopic].timestamp = new Date().toLocaleString();
                         }
                         bot.sendMessage({
                             to: channelID,
@@ -163,7 +164,7 @@ bot.on('message', function(user, userID, channelID, message, event) {
                     } else {
                         bot.sendMessage({
                             to: channelID,
-                            message: "Need to provide a topic, for example: !revealAllVotesForTopic current"
+                            message: "Need to provide a topic, for example: !revealAllVotesForTopic default"
                         });
                     }
                     break;
@@ -218,7 +219,7 @@ bot.on('message', function(user, userID, channelID, message, event) {
                     } else {
                         bot.sendMessage({
                             to: channelID,
-                            message: "Need to provide a topic, for example: !deleteallvotesfortopic current"
+                            message: "Need to provide a topic, for example: !deleteallvotesfortopic default"
                         });
                     }
                     break;
@@ -236,6 +237,36 @@ bot.on('message', function(user, userID, channelID, message, event) {
                         });
                         mainChannel = channelID
                     }
+                    break;
+
+                case 'setdefaulttopic':
+                    var newDefaultTopic = args[0];
+                    if (newDefaultTopic) {
+                        if (mainChannel === channelID) {
+                            bot.sendMessage({
+                                to: mainChannel,
+                                message: "Changing default topic from '" + defaultTopic + "' to '" + newDefaultTopic + "'"
+                            });
+                            defaultTopic = newDefaultTopic;
+                        } else {
+                            bot.sendMessage({
+                                to: channelID,
+                                message: "Can only set default topic in the main channel"
+                            });
+                        }
+                    } else {
+                        bot.sendMessage({
+                            to: channelID,
+                            message: "Need to provide a topic, for example: !setdefaulttopic 311"
+                        });
+                    }
+                    break;
+
+                case 'getdefaulttopic':
+                    bot.sendMessage({
+                        to: channelID,
+                        message: "The default topic is " + defaultTopic
+                    });
                     break;
 
                 case 'testmain':

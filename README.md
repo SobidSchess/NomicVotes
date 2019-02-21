@@ -9,7 +9,7 @@ The topic can be any name, like 311 for proposal 311 or 209judgement for voting 
 
 
 The topic and yourVote cannot have spaces in them. 
-Voting without a topic will save your vote to the default topic named current. 
+Voting without a topic will save your vote to the default topic .
 If you've already voted, voting again will update your old vote. 
 
 
@@ -34,6 +34,14 @@ Show who has voted for a topic, or all topics if no topic is given. Can be used 
 Example:
 * !whohasvoted
 * !whohasvoted 311
+
+### Command: !setdefaulttopic topic
+
+Set the name of the default topic. Any votes that come in after this that don't specify a topic will use this topic. This can only be done in the main nomic channel.
+
+### Command: !getdefaulttopic
+
+Show what the default topic is right now.
 
 ### Command: !revealallvotesforalltopics
 
