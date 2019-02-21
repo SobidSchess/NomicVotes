@@ -39,7 +39,7 @@ bot.on('message', function(user, userID, channelID, message, event) {
 				break;
 				
 			case 'deleteVote':
-				votes[userID] = null;
+				delete votes.userID;
 				bot.sendMessage({
 					to: channelID,
 					message: "Deleted votes for " + user
