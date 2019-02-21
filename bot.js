@@ -72,9 +72,11 @@ bot.on('message', function(user, userID, channelID, message, event) {
                         votes[userID].user = user;
                     }
                     if (args[1]) {
+                        votes[userID].topics[args[0]] = {};
                         votes[userID].topics[args[0]].vote = args[1];
                         votes[userID].topics[args[0]].timestamp = Date.now.toLocaleString();
                     } else {
+                        votes[userID].topics.current = {};
                         votes[userID].topics.current.vote = args[0];
                         votes[userID].topics.current.timestamp = Date.now.toLocaleString();
                     }
