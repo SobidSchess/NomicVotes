@@ -39,7 +39,7 @@ function getTopicVotes(topicKey, messageString, includeVotes) {
 function getAllTopicVotes(messageString, includeVotes) {
     var completedTopics = [];
     for (var userKey in votes) {
-        for (var topicKey in votes[userKey]) {
+        for (var topicKey in votes[userKey].topics) {
             if (!completedTopics.includes(topicKey)) {
                 messageString = messageString + getTopicVotes(topicKey, messageString, includeVotes);
                 completedTopics.push(topicKey);
