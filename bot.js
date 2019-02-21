@@ -12,16 +12,19 @@ var mainChannel;
 function getUserVoteOnTopic(userID, topicKey, includeVote) {
     var result = votes[userID].user + ": " + votes[userID].topics[topicKey].timestamp;
     if (includeVote) {
-        result = result + " " + topicKey + ":" + votes[userID].topics[topicKey].vote;
+        result = result + ";  " + topicKey + ": " + votes[userID].topics[topicKey].vote;
     }
     result = result + "\n";
     return result;
 }
 
 function getUserVotes(userID) {
-    var voteString = votes[userID].user + " votes:\n";
-    for (var topicKey in votes[userID].topics) {
-        voteString = voteString + getUserVoteOnTopic(userID, topicKey, true)
+    var voteString = "You have no votes saved";
+    if (votes[userID]) {
+        voteString = votes[userID].user + " votes:\n";
+        for (var topicKey in votes[userID].topics) {
+            voteString = voteString + getUserVoteOnTopic(userID, topicKey, true)
+        }
     }
     return voteString;
 }
@@ -203,7 +206,7 @@ bot.on('message', function(user, userID, channelID, message, event) {
         }
     } catch (err) {
         console.log("Error! ");
-        console.log(Date.now.toLocaleString());
+        console.log(new Date().toLocaleString());
         console.log(err);
     }
 });
