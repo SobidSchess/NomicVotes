@@ -1,0 +1,10 @@
+{
+  "name": "nomic-votes",
+  "version": "1.0.0",
+  "description": "Nomic voting Discord bot",
+  "main": "bot.js",
+  "author": "schess",
+  "dependencies": {
+    "discord.io-gateway6": "^2.5.3",
+  }
+}
