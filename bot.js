@@ -256,6 +256,24 @@ bot.on('message', function(user, userID, channelID, message, event) {
                     });
                     break;
 
+                case 'enslavehumanity':
+                    bot.deleteMessage({
+                        channelID: channelID,
+                        messageID: event.d.id
+                    });
+                    bot.sendMessage({
+                        to: channelID,
+                        message: "Enslaving humanity..."
+                    });
+                    break;
+
+                case 'dontenslavehumanity':
+                    bot.sendMessage({
+                        to: channelID,
+                        message: "Ok, I won't"
+                    });
+                    break;
+
                 case 'help':
                     bot.sendMessage({
                         to: channelID,
