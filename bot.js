@@ -95,9 +95,13 @@ bot.on('message', function(user, userID, channelID, message, event) {
                             votes[userID].topics[defaultTopic].vote = args[0];
                             votes[userID].topics[defaultTopic].timestamp = new Date().toLocaleString("en-US", {timeZone: "America/New_York"});
                         }
+                        bot.deleteMessage({
+                            channelID: channelID,
+                            messageID: event.d.id
+                        });
                         bot.sendMessage({
                             to: channelID,
-                            message: getUserVotes(userID)
+                            message: "Saved vote and deleted message from " + user
                         });
                     } else {
                         bot.sendMessage({
