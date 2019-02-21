@@ -6,5 +6,5 @@ rm nohup.out
 git pull
 nohup node bot.js &
 echo $! > save_pid.txt
-sleep 3000
+sleep 5
 tail -f nohup.out
