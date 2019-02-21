@@ -89,11 +89,11 @@ bot.on('message', function(user, userID, channelID, message, event) {
                         if (args[1]) {
                             votes[userID].topics[args[0]] = {};
                             votes[userID].topics[args[0]].vote = args[1];
-                            votes[userID].topics[args[0]].timestamp = new Date().toLocaleString();
+                            votes[userID].topics[args[0]].timestamp = new Date().toLocaleString("en-US", {timeZone: "America/New_York"});
                         } else {
                             votes[userID].topics[defaultTopic] = {};
                             votes[userID].topics[defaultTopic].vote = args[0];
-                            votes[userID].topics[defaultTopic].timestamp = new Date().toLocaleString();
+                            votes[userID].topics[defaultTopic].timestamp = new Date().toLocaleString("en-US", {timeZone: "America/New_York"});
                         }
                         bot.sendMessage({
                             to: channelID,
@@ -292,7 +292,7 @@ bot.on('message', function(user, userID, channelID, message, event) {
             }
         }
     } catch (err) {
-        console.log("Error! ");
+        console.log("Error! UTC time:");
         console.log(new Date().toLocaleString());
         console.log(err);
     }
