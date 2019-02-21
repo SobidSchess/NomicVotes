@@ -63,7 +63,12 @@ bot.on('message', function(user, userID, channelID, message, event) {
             switch (cmd) {
                 case 'vote':
                     if (!votes[userID]) {
+                        votes[userID] = {};
+                    }
+                    if (!votes[userID].topics) {
                         votes[userID].topics = {};
+                    }
+                    if (!votes[userID].user) {
                         votes[userID].user = user;
                     }
                     if (args[1]) {
