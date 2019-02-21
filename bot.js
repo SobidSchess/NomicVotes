@@ -41,7 +41,7 @@ function getAllTopicVotes(messageString, includeVotes) {
     for (var userKey in votes) {
         for (var topicKey in votes[userKey].topics) {
             if (!completedTopics.includes(topicKey)) {
-                messageString = messageString + getTopicVotes(topicKey, messageString, includeVotes);
+                messageString = getTopicVotes(topicKey, messageString, includeVotes);
                 completedTopics.push(topicKey);
             }
         }
@@ -62,28 +62,35 @@ bot.on('message', function(user, userID, channelID, message, event) {
             args = args.splice(1);
             switch (cmd) {
                 case 'vote':
-                    if (!votes[userID]) {
-                        votes[userID] = {};
-                    }
-                    if (!votes[userID].topics) {
-                        votes[userID].topics = {};
-                    }
-                    if (!votes[userID].user) {
-                        votes[userID].user = user;
-                    }
-                    if (args[1]) {
-                        votes[userID].topics[args[0]] = {};
-                        votes[userID].topics[args[0]].vote = args[1];
-                        votes[userID].topics[args[0]].timestamp = new Date().toLocaleString();
+                    if (args[0]) {
+                        if (!votes[userID]) {
+                            votes[userID] = {};
+                        }
+                        if (!votes[userID].topics) {
+                            votes[userID].topics = {};
+                        }
+                        if (!votes[userID].user) {
+                            votes[userID].user = user;
+                        }
+                        if (args[1]) {
+                            votes[userID].topics[args[0]] = {};
+                            votes[userID].topics[args[0]].vote = args[1];
+                            votes[userID].topics[args[0]].timestamp = new Date().toLocaleString();
+                        } else {
+                            votes[userID].topics.current = {};
+                            votes[userID].topics.current.vote = args[0];
+                            votes[userID].topics.current.timestamp = new Date().toLocaleString();
+                        }
+                        bot.sendMessage({
+                            to: channelID,
+                            message: getUserVotes(userID)
+                        });
                     } else {
-                        votes[userID].topics.current = {};
-                        votes[userID].topics.current.vote = args[0];
-                        votes[userID].topics.current.timestamp = new Date().toLocaleString();
+                        bot.sendMessage({
+                            to: channelID,
+                            message: "Need to provide a vote, for example: !vote yes\nOr !vote 354 no"
+                        });
                     }
-                    bot.sendMessage({
-                        to: channelID,
-                        message: getUserVotes(userID)
-                    });
                     break;
 
                 case 'myvotes':
