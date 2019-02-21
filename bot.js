@@ -8,6 +8,10 @@ var bot = new Discord.Client({
 
 var votes = {};
 var mainChannel;
+var help = "Enter this message to vote yes:\n!vote yes\nOr to vote no:\n!vote no\n\nTo see your current votes, use:\n!myVotes\n\nFor more detail, go to " +
+    "the README on this page: https://github.com/SobidSchess/NomicVotes/blob/master/README.md";
+
+
 
 function getUserVoteOnTopic(userID, topicKey, includeVote) {
     var result = votes[userID].user + ": " + votes[userID].topics[topicKey].timestamp;
@@ -21,7 +25,7 @@ function getUserVoteOnTopic(userID, topicKey, includeVote) {
 function getUserVotes(userID) {
     var voteString = "You have no votes saved";
     if (votes[userID]) {
-        voteString = votes[userID].user + " votes (timestamp; topic: vote):\n";
+        voteString = votes[userID].user + " votes (timestamp; topic: vote)\n";
         for (var topicKey in votes[userID].topics) {
             voteString = voteString + getUserVoteOnTopic(userID, topicKey, true)
         }
@@ -97,7 +101,7 @@ bot.on('message', function(user, userID, channelID, message, event) {
                     } else {
                         bot.sendMessage({
                             to: channelID,
-                            message: "Need to provide a vote, for example: !vote yes\nOr !vote 354 no"
+                            message: "Need to provide a vote, for example: !vote yes\nOr !vote 354 no\n!help for instructions"
                         });
                     }
                     break;
@@ -110,11 +114,20 @@ bot.on('message', function(user, userID, channelID, message, event) {
                     break;
 
                 case 'whohasvoted':
-                    var whoHasVotedMessage = "Who has voted on what topics:\n";
-                    bot.sendMessage({
-                        to: channelID,
-                        message: getAllTopicVotes(whoHasVotedMessage, false)
-                    });
+                    var whoHasVotedMessage = "Who has voted on ";
+                    if (args[0]) {
+                        whoHasVotedMessage = whoHasVotedMessage + args[0] + " topic:\n";
+                        bot.sendMessage({
+                            to: channelID,
+                            message: getTopicVotes(args[0], whoHasVotedMessage, false)
+                        });
+                    } else {
+                        whoHasVotedMessage = whoHasVotedMessage + "what topics:\n";
+                        bot.sendMessage({
+                            to: channelID,
+                            message: getAllTopicVotes(whoHasVotedMessage, false)
+                        });
+                    }
                     break;
 
                 case 'revealallvotesforalltopics':
@@ -239,7 +252,12 @@ bot.on('message', function(user, userID, channelID, message, event) {
                     });
                     break;
 
-
+                case 'help':
+                    bot.sendMessage({
+                        to: channelID,
+                        message: help
+                    });
+                    break;
             }
         }
     } catch (err) {
