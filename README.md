@@ -19,6 +19,10 @@ Show your vote. Everyone in the channel can see
 
 Deletes your vote in the channel.
 
+### Command: !deletechannelvotes
+
+Deletes all votes in the channel.
+
 ### Command: !whohasvoted
 
 Show who has voted in the channel.

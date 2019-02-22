@@ -32,12 +32,35 @@ function getUserVotes(userID) {
 }
 
 function getTopicVotes(topicKey, messageString, includeVotes) {
+    var numVotes = 0;
     for (var userKey in votes) {
         if (votes[userKey].topics[topicKey]) {
+            numVotes++;
             messageString = messageString + getUserVoteOnTopic(userKey, topicKey, includeVotes);
         }
     }
-    return messageString;
+    return {
+        numVotes: numVotes,
+        messageString: messageString
+    };
+}
+
+function countVotes(channelID) {
+    return getTopicVotes(channelID, "", false).numVotes;
+}
+
+function countMembers(members) {
+    var numMembers = 0;
+    for (var member in members) {
+        if (!member.user.bot) {
+            numMembers++;
+        }
+    }
+    return numMembers;
+}
+
+function voteCountMessage(votes, members) {
+    return "\n" + votes + " votes counted out of " + members + " channel members";
 }
 
 function getAllTopicVotes(messageString, includeVotes) {
@@ -73,6 +96,7 @@ client.on('message', msg => {
             var channel = msg.channel;
             var channelID = channel.id;
             var channelName = channel.name;
+            var channelMembers = channel.members;
 
             args = args.splice(1);
             switch (cmd) {
@@ -91,7 +115,14 @@ client.on('message', msg => {
                         votes[userID].topics[channelID].vote = args[0];
                         votes[userID].topics[channelID].timestamp = new Date().toLocaleString("en-US", {timeZone: "America/New_York"});
                         msg.delete();
-                        channel.send("Saved vote for this channel and deleted message from " + user);
+                        var voteMessage = "Saved vote for this channel and deleted message from " + user;
+                        var voteCount = countVotes(channelID);
+                        var memberCount = countMembers(channel.members);
+                        voteMessage += voteCountMessage(voteCount, memberCount);
+                        if (voteCount === memberCount) {
+                            voteMessage += "All channel members have voted!";
+                        }
+                        channel.send(voteMessage);
                     } else {
                         channel.send("Need to provide a vote.\n" + help);
                     }
@@ -103,17 +134,26 @@ client.on('message', msg => {
 
                 case 'whohasvoted':
                     var whoHasChannelVotedMessage = "Who has voted in channel " + channelName + "\n";
-                    channel.send(getTopicVotes(channelID, whoHasChannelVotedMessage, false));
+                    var topicVoters = getTopicVotes(channelID, whoHasChannelVotedMessage, false);
+                    whoHasChannelVotedMessage = topicVoters.messageString + voteCountMessage(topicVoters.numVotes, countMembers(channel.members));
+                    channel.send(whoHasChannelVotedMessage);
                     break;
 
                 case 'revealvotes':
                     var revealChannelVotesString = "Revealing votes for channel " + channelName + "\n";
-                    channel.send(getTopicVotes(channelID, revealChannelVotesString, true));
+                    var topicVotes = getTopicVotes(channelID, revealChannelVotesString, true);
+                    revealChannelVotesString = topicVotes.messageString + voteCountMessage(topicVoters.numVotes, countMembers(channel.members));
+                    channel.send(revealChannelVotesString);
                     break;
 
                 case 'deletemyvote':
                     delete votes[userID].topics[channelID];
                     channel.send("Deleted channel vote for " + user);
+                    break;
+
+                case 'deletechannelvotes':
+                    deleteTopicVotes(channelID);
+                    channel.send("Deleted all votes in this channel");
                     break;
 
                 case 'reassure':
