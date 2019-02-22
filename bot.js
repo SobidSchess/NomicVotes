@@ -82,7 +82,7 @@ function deleteTopicVotes(deleteTopic) {
     }
 }
 
-client.once('ready', () => {
+client.on('ready', () => {
     console.log('Logged in');
 });
 
