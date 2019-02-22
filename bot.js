@@ -9,11 +9,14 @@ var help = "Enter this message to vote yes for the issue in this channel:\n!vote
 
 
 function getUserVoteOnTopic(userID, topicKey, includeVote) {
-    var result = votes[userID].user + ": ";
-    if (includeVote) {
-        result = result + votes[userID].topics[topicKey].vote;
+    var result = "No votes for userID " + userID;
+    if (votes[userID] && votes[userID].topics) {
+        result = votes[userID].user + ": ";
+        if (includeVote) {
+            result = result + votes[userID].topics[topicKey].vote;
+        }
+        result = result + "  ----  " + votes[userID].topics[topicKey].timestamp + "\n";
     }
-    result = result + "  ----  " + votes[userID].topics[topicKey].timestamp + "\n";
     return result;
 }
 
@@ -95,7 +98,7 @@ client.on('message', msg => {
                     break;
 
                 case 'myvote':
-                    channel.send(getUserVotesOnTopic(userID, channelID, true));
+                    channel.send(getUserVoteOnTopic(userID, channelID, true));
                     break;
 
                 case 'whohasvoted':
