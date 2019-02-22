@@ -88,14 +88,14 @@ client.on('message', msg => {
                         votes[userID].topics[channelID].vote = args[0];
                         votes[userID].topics[channelID].timestamp = new Date().toLocaleString("en-US", {timeZone: "America/New_York"});
                         msg.delete();
-                        channel.send("Saved vote and deleted message from " + user);
+                        channel.send("Saved vote for this channel and deleted message from " + user);
                     } else {
                         channel.send("Need to provide a vote.\n" + help);
                     }
                     break;
 
-                case 'myvotes':
-                    channel.send(getUserVotes(userID));
+                case 'myvote':
+                    channel.send(getUserVotesOnTopic(userID, channelID, true));
                     break;
 
                 case 'whohasvoted':
