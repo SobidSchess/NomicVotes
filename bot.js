@@ -13,12 +13,14 @@ var help = "Enter this message to vote yes:\n!vote yes\nOr to vote no:\n!vote no
 
 
 
-function getUserVoteOnTopic(userID, topicKey, includeVote) {
-    var result = votes[userID].user + ": " + votes[userID].topics[topicKey].timestamp;
-    if (includeVote) {
+function getUserVoteOnTopic(userID, topicKey, includeVoteAndTopic, includeVote) {
+    var result = votes[userID].user + ": ";
+    if (includeVoteAndTopic) {
         result = result + ";  " + topicKey + ": " + votes[userID].topics[topicKey].vote;
+    } else if (includeVote) {
+        result = result + votes[userID].topics[topicKey].vote;
     }
-    result = result + "\n";
+    result = result + "   " + votes[userID].topics[topicKey].timestamp + "\n";
     return result;
 }
 
@@ -132,6 +134,25 @@ bot.on('message', function(user, userID, channelID, message, event) {
                             message: getAllTopicVotes(whoHasVotedMessage, false)
                         });
                     }
+                    break;
+
+                case 'whohaschannelvoted':
+                    var whoHasChannelVotedMessage = "Who has voted in channel " + bot.channels.get(channelID).name;
+                    whoHasVotedMessage = whoHasVotedMessage + args[0] + " topic:\n";
+                    bot.sendMessage({
+                        to: channelID,
+                        message: getTopicVotes(channelID, whoHasChannelVotedMessage, false)
+                    });
+                    break;
+
+                case 'revealchannelvotes':
+                    var channelName = bot.channels.get(channelID).name;
+                    var revealChannelVotesString = "Revealing votes for channel " + channelName;
+                    bot.sendMessage({
+                        to: mainChannel,
+                        message: getTopicVotes(channelID, revealChannelVotesString, true)
+                    });
+
                     break;
 
                 case 'revealallvotesforalltopics':
