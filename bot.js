@@ -51,11 +51,13 @@ function countVotes(channelID) {
 
 function countMembers(members) {
     var numMembers = 0;
-    members.forEach(function(value, key, map) {
-        if (!value.user.bot) {
-            numMembers++;
-        }
-    });
+    if (members) {
+        members.forEach(function (value, key, map) {
+            if (!value.user.bot) {
+                numMembers++;
+            }
+        });
+    }
     return numMembers;
 }
 
