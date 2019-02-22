@@ -4,7 +4,6 @@ const auth = require('./auth.json');
 const client = new Discord.Client();
 
 var votes = {};
-var mainChannel;
 var help = "Enter this message to vote yes:\n!vote yes\nOr to vote no:\n!vote no\n\nTo see your votes, use:\n!myVotes\n\nFor more detail, go to " +
     "the README on this page: https://github.com/SobidSchess/NomicVotes/blob/master/README.md";
 
@@ -14,7 +13,7 @@ function getUserVoteOnTopic(userID, topicKey, includeVote) {
     if (includeVote) {
         result = result + votes[userID].topics[topicKey].vote;
     }
-    result = result + "   " + votes[userID].topics[topicKey].timestamp + "\n";
+    result = result + "----" + votes[userID].topics[topicKey].timestamp + "\n";
     return result;
 }
 
