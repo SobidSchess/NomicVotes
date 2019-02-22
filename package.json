@@ -5,6 +5,6 @@
   "main": "bot.js",
   "author": "schess",
   "dependencies": {
-    "discord.io-gateway6": "^2.5.3"
+    "discord.js": "^11.4.2"
   }
 }
