@@ -1,16 +1,12 @@
-var Discord = require('discord.io-gateway6');
-var auth = require('./auth.json');
+const Discord = require('discord.js');
+const auth = require('./auth.json');
 
-var bot = new Discord.Client({
-    token: auth.token,
-    autorun: true
-});
+const client = new Discord.Client();
 
 var votes = {};
 var mainChannel;
 var help = "Enter this message to vote yes:\n!vote yes\nOr to vote no:\n!vote no\n\nTo see your votes, use:\n!myVotes\n\nFor more detail, go to " +
     "the README on this page: https://github.com/SobidSchess/NomicVotes/blob/master/README.md";
-
 
 
 function getUserVoteOnTopic(userID, topicKey, includeVoteAndTopic, includeVote) {
@@ -64,10 +60,17 @@ function deleteTopicVotes(deleteTopic) {
     }
 }
 
-bot.on('ready', function() {
-    console.log('Logged in as %s - %s\n', bot.username, bot.id);
+client.once('ready', () => {
+    console.log('Logged in as ${client.user.tag}');
 });
 
+client.on('message', msg => {
+    if (msg.content === 'ping') {
+        msg.reply('pong');
+    }
+});
+
+/**
 bot.on('message', function(user, userID, channelID, message, event) {
     try {
         if (message.substring(0, 1) == '!') {
@@ -309,3 +312,5 @@ bot.on('message', function(user, userID, channelID, message, event) {
         console.log(err);
     }
 });
+*/
+client.login(auth.token);
