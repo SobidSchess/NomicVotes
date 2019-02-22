@@ -51,6 +51,7 @@ function countVotes(channelID) {
 
 function countMembers(members) {
     var numMembers = 0;
+    console.log(members);
     for (var member in members) {
         if (!member.user.bot) {
             numMembers++;
@@ -142,7 +143,7 @@ client.on('message', msg => {
                 case 'revealvotes':
                     var revealChannelVotesString = "Revealing votes for channel " + channelName + "\n";
                     var topicVotes = getTopicVotes(channelID, revealChannelVotesString, true);
-                    revealChannelVotesString = topicVotes.messageString + voteCountMessage(topicVoters.numVotes, countMembers(channel.members));
+                    revealChannelVotesString = topicVotes.messageString + voteCountMessage(topicVotes.numVotes, countMembers(channel.members));
                     channel.send(revealChannelVotesString);
                     break;
 
