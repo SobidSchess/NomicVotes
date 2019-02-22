@@ -11,9 +11,9 @@ var help = "Enter this message to vote yes for the issue in this channel:\n!vote
 function getUserVoteOnTopic(userID, topicKey, includeVote) {
     var result = "No votes for userID " + userID;
     if (votes[userID] && votes[userID].topics) {
-        result = votes[userID].user + ": ";
+        result = votes[userID].user;
         if (includeVote) {
-            result = result + votes[userID].topics[topicKey].vote;
+            result = result + ": " + votes[userID].topics[topicKey].vote;
         }
         result = result + "  ----  " + votes[userID].topics[topicKey].timestamp + "\n";
     }
