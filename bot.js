@@ -84,6 +84,36 @@ function deleteTopicVotes(deleteTopic) {
     }
 }
 
+function handleVote(vote, msg) {
+    var userID = msg.author.id;
+    var user = msg.author.username;
+    var channel = msg.channel;
+    var channelID = channel.id;
+    var channelName = channel.name;
+
+    if (!votes[userID]) {
+        votes[userID] = {};
+    }
+    if (!votes[userID].topics) {
+        votes[userID].topics = {};
+    }
+    if (!votes[userID].user) {
+        votes[userID].user = user;
+    }
+    votes[userID].topics[channelID] = {};
+    votes[userID].topics[channelID].vote = args[0];
+    votes[userID].topics[channelID].timestamp = new Date().toLocaleString("en-US", {timeZone: "America/New_York"});
+    msg.delete();
+    var voteMessage = "Saved vote for this channel and deleted message from " + user;
+    var voteCount = countVotes(channelID);
+    var memberCount = countMembers(channel.members);
+    voteMessage += voteCountMessage(voteCount, memberCount);
+    if (voteCount === memberCount) {
+        voteMessage += "\nAll channel members have voted!";
+    }
+    channel.send(voteMessage);
+}
+
 client.on('ready', () => {
     console.log('Logged in');
 });
@@ -98,36 +128,23 @@ client.on('message', msg => {
             var channel = msg.channel;
             var channelID = channel.id;
             var channelName = channel.name;
-            var channelMembers = channel.members;
 
             args = args.splice(1);
             switch (cmd) {
                 case 'vote':
                     if (args[0]) {
-                        if (!votes[userID]) {
-                            votes[userID] = {};
-                        }
-                        if (!votes[userID].topics) {
-                            votes[userID].topics = {};
-                        }
-                        if (!votes[userID].user) {
-                            votes[userID].user = user;
-                        }
-                        votes[userID].topics[channelID] = {};
-                        votes[userID].topics[channelID].vote = args[0];
-                        votes[userID].topics[channelID].timestamp = new Date().toLocaleString("en-US", {timeZone: "America/New_York"});
-                        msg.delete();
-                        var voteMessage = "Saved vote for this channel and deleted message from " + user;
-                        var voteCount = countVotes(channelID);
-                        var memberCount = countMembers(channel.members);
-                        voteMessage += voteCountMessage(voteCount, memberCount);
-                        if (voteCount === memberCount) {
-                            voteMessage += "\nAll channel members have voted!";
-                        }
-                        channel.send(voteMessage);
+                        handleVote(args[0], msg)
                     } else {
                         channel.send("Need to provide a vote.\n" + help);
                     }
+                    break;
+
+                case 'voteyes':
+                    handleVote('yes', msg)
+                    break;
+
+                case 'voteno':
+                    handleVote('no', msg)
                     break;
 
                 case 'myvote':
