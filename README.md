@@ -1,71 +1,31 @@
 # NomicVotes
 
-### Command: !vote [topic] yourVote
+### Command: !vote yourVote
 
-Save your vote for a topic. You probably want to do this in a private message to the bot to keep it secret. 
-
-The topic is not required, and is used as a category for the vote. 
-The topic can be any name, like 311 for proposal 311 or 209judgement for voting on a judgement concerning rule 209.
-
-
-The topic and yourVote cannot have spaces in them. 
-Voting without a topic will save your vote to the default topic .
-If you've already voted, voting again will update your old vote. 
-
+yourVote can be yes or no or anything without spaces.
+The bot will delete the message with your vote in the channel, so your vote will be private
+You can vote again to change your vote, or to make sure you voted correctly
 
 Examples:
 * !vote yes
 * !vote no
-* !vote 311 yes
-* !vote 209judgement no
+* !vote almostAnythingReally
 
-### Command: !myvotes
+### Command: !myvote
 
-Show your votes. You probably want to do this in a private message to the bot to keep it secret.
+Show your vote. Everyone in the channel can see
 
-### Command: !deletevote [topic]
+### Command: !deletemyvote
 
-Delete all your votes. If you give a topic, it will only delete your vote for that topic.
+Deletes your vote in the channel.
 
-### Command: !whohasvoted [topic]
+### Command: !whohasvoted
 
-Show who has voted for a topic, or all topics if no topic is given. Can be used in a private message to the bot to not reveal that you're checking on this.
+Show who has voted in the channel.
 
-Example:
-* !whohasvoted
-* !whohasvoted 311
+### Command: !revealvotes
 
-### Command: !setdefaulttopic topic
-
-Set the name of the default topic. Any votes that come in after this that don't specify a topic will use this topic. This can only be done in the main nomic channel.
-
-### Command: !getdefaulttopic
-
-Show what the default topic is right now.
-
-### Command: !revealallvotesforalltopics
-
-Show all votes for all topics. This can only be done in the main nomic channel, so it can not be done secretly.
-
-### Command: !revealallvotesfortopic topic
-
-Show all votes for a specific topic. This can only be done in the main nomic channel, so it can not be done secretly.
-
-### Command: !deleteallvotesforalltopics
-
-Delete all votes for all topics, without showing them. This can only be done in the main nomic channel, so it can not be done secretly.
-
-### Command: !deleteallvotesfortopic topic
-
-Delete all votes for a specific topic, without showing them. This can only be done in the main nomic channel, so it can not be done secretly.
-
-### Command: !setmain
-
-You shouldn't need to do this. This sets the main nomic channel (for revealing and deleting votes). It can't be changed again unless the bot restarts.
-
-### Command: !testmain
-
-You shouldn't need to do this. Tells you whether or not the channel you are in is the main nomic channel (for revealing and deleting votes).
+Reveal everyone's votes to the channel
 
 ### Command: !help
 
