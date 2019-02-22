@@ -107,7 +107,7 @@ bot.on('message', function(user, userID, channelID, message, event) {
                     } else {
                         bot.sendMessage({
                             to: channelID,
-                            message: "Need to provide a vote, for example: !vote yes\nOr !vote 354 no\n!help for instructions"
+                            message: "Need to provide a vote, for example: !vote yes\nOr !vote no\n!help for instructions"
                         });
                     }
                     break;
