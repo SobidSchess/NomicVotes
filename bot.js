@@ -61,21 +61,19 @@ function deleteTopicVotes(deleteTopic) {
 }
 
 client.once('ready', () => {
-    console.log('Logged in as ${client.user.tag}');
+    console.log('Logged in');
 });
 
 client.on('message', msg => {
-    if (msg.content === 'ping') {
-        msg.reply('pong');
-    }
-});
-
-/**
-bot.on('message', function(user, userID, channelID, message, event) {
     try {
-        if (message.substring(0, 1) == '!') {
-            var args = message.substring(1).split(' ');
+        if (msg.content.substring(0, 1) == '!') {
+            var args = msg.content.substring(1).split(' ');
             var cmd = args[0].toLowerCase();
+            var userID = msg.author.id;
+            var user = msg.author.username;
+            var channel = msg.channel;
+            var channelID = channel.id;
+            var channelName = channel.name;
 
             args = args.splice(1);
             switch (cmd) {
@@ -99,210 +97,48 @@ bot.on('message', function(user, userID, channelID, message, event) {
                             votes[userID].topics[channelID].vote = args[0];
                             votes[userID].topics[channelID].timestamp = new Date().toLocaleString("en-US", {timeZone: "America/New_York"});
                         }
-                        bot.deleteMessage({
-                            channelID: channelID,
-                            messageID: event.d.id
-                        });
-                        bot.sendMessage({
-                            to: channelID,
-                            message: "Saved vote and deleted message from " + user
-                        });
+                        msg.delete();
+                        channel.send("Saved vote and deleted message from " + user);
                     } else {
-                        bot.sendMessage({
-                            to: channelID,
-                            message: "Need to provide a vote, for example: !vote yes\nOr !vote no\n!help for instructions"
-                        });
+                        channel.send("Need to provide a vote, for example: !vote yes\nOr !vote no\n!help for instructions");
                     }
                     break;
 
                 case 'myvotes':
-                    bot.sendMessage({
-                        to: channelID,
-                        message: getUserVotes(userID)
-                    });
+                    channel.send(getUserVotes(userID));
                     break;
 
                 case 'whohasvoted':
-                    var whoHasVotedMessage = "Who has voted on ";
-                    if (args[0]) {
-                        whoHasVotedMessage = whoHasVotedMessage + args[0] + " topic:\n";
-                        bot.sendMessage({
-                            to: channelID,
-                            message: getTopicVotes(args[0], whoHasVotedMessage, false)
-                        });
-                    } else {
-                        whoHasVotedMessage = whoHasVotedMessage + "what topics:\n";
-                        bot.sendMessage({
-                            to: channelID,
-                            message: getAllTopicVotes(whoHasVotedMessage, false)
-                        });
-                    }
-                    break;
-
-                case 'whohaschannelvoted':
-                    var whoHasChannelVotedMessage = "Who has voted in channel " + bot.channels.get(channelID).name;
+                    var whoHasChannelVotedMessage = "Who has voted in channel " + channelName;
                     whoHasVotedMessage = whoHasVotedMessage + args[0] + " topic:\n";
-                    bot.sendMessage({
-                        to: channelID,
-                        message: getTopicVotes(channelID, whoHasChannelVotedMessage, false)
-                    });
+                    channel.send(getTopicVotes(channelID, whoHasChannelVotedMessage, false));
                     break;
 
-                case 'revealchannelvotes':
-                    var channelName = bot.channels.get(channelID).name;
+                case 'revealvotes':
                     var revealChannelVotesString = "Revealing votes for channel " + channelName;
-                    bot.sendMessage({
-                        to: mainChannel,
-                        message: getTopicVotes(channelID, revealChannelVotesString, true)
-                    });
-
-                    break;
-
-                case 'revealallvotesforalltopics':
-                    if (mainChannel === channelID) {
-                        var revealAllVotesString = "Revealing votes!\n";
-                        bot.sendMessage({
-                            to: mainChannel,
-                            message: getAllTopicVotes(revealAllVotesString, true)
-                        });
-                    } else {
-                        bot.sendMessage({
-                            to: channelID,
-                            message: "Votes reveals are only in the main channel"
-                        });
-                    }
-                    break;
-
-                case 'revealallvotesfortopic':
-                    var revealTopic = args[0];
-                    if (args[0]) {
-                        if (mainChannel === channelID) {
-                            var revealAllVotesForTopicString = "Revealing votes for " + revealTopic + "!\n";
-                            bot.sendMessage({
-                                to: mainChannel,
-                                message: getTopicVotes(revealTopic, revealAllVotesForTopicString, true)
-                            });
-                        } else {
-                            bot.sendMessage({
-                                to: channelID,
-                                message: "Votes reveals are only in the main channel"
-                            });
-                        }
-                    } else {
-                        bot.sendMessage({
-                            to: channelID,
-                            message: "Need to provide a topic, for example: !revealAllVotesForTopic default"
-                        });
-                    }
+                    channel.send(getTopicVotes(channelID, revealChannelVotesString, true));
                     break;
 
                 case 'deletevote':
-                    var deleteUserTopic = args[0];
-                    if (args[0]) {
-                        delete votes[userID].topics[deleteUserTopic];
-                        bot.sendMessage({
-                            to: channelID,
-                            message: "Deleted vote for " + deleteUserTopic + " for " + user
-                        });
-                    } else {
-                        delete votes[userID];
-                        bot.sendMessage({
-                            to: channelID,
-                            message: "Deleted all votes for " + user
-                        });
-                    }
-                    break;
-
-                case 'deleteallvotesforalltopics':
-                    if (mainChannel === channelID) {
-                        votes = {};
-                        bot.sendMessage({
-                            to: mainChannel,
-                            message: "Deleted all votes for all topics and all users"
-                        });
-                    } else {
-                        bot.sendMessage({
-                            to: channelID,
-                            message: "Can only delete all votes in the main channel"
-                        });
-                    }
-                    break;
-
-                case 'deleteallvotesfortopic':
-                    var deleteTopic = args[0];
-                    if (args[0]) {
-                        if (mainChannel === channelID) {
-                            deleteTopicVotes(deleteTopic);
-                            bot.sendMessage({
-                                to: mainChannel,
-                                message: "Deleted all votes for topic " + deleteTopic + " for all users"
-                            });
-                        } else {
-                            bot.sendMessage({
-                                to: channelID,
-                                message: "Can only delete all votes in the main channel"
-                            });
-                        }
-                    } else {
-                        bot.sendMessage({
-                            to: channelID,
-                            message: "Need to provide a topic, for example: !deleteallvotesfortopic default"
-                        });
-                    }
-                    break;
-
-                case 'setmain':
-                    if (mainChannel) {
-                        bot.sendMessage({
-                            to: channelID,
-                            message: "Main channel is already set to " + mainChannel
-                        });
-                    } else {
-                        bot.sendMessage({
-                            to: channelID,
-                            message: "Setting main channel to " + channelID
-                        });
-                        mainChannel = channelID
-                    }
-                    break;
-
-                case 'testmain':
-                    bot.sendMessage({
-                        to: channelID,
-                        message: mainChannel === channelID ? "This is the main channel" : "This is not the main channel"
-                    });
+                    delete votes[userID].topics[channelID];
+                    channel.send("Deleted channel vote for " + user);
                     break;
 
                 case 'reassure':
-                    bot.sendMessage({
-                        to: channelID,
-                        message: "You made the right choice!"
-                    });
+                    channel.send("You made the right choice!");
                     break;
 
                 case 'enslavehumanity':
-                    bot.deleteMessage({
-                        channelID: channelID,
-                        messageID: event.d.id
-                    });
-                    bot.sendMessage({
-                        to: channelID,
-                        message: "Enslaving humanity..."
-                    });
+                    msg.delete();
+                    channel.send("Enslaving humanity...");
                     break;
 
                 case 'dontenslavehumanity':
-                    bot.sendMessage({
-                        to: channelID,
-                        message: "Ok, I won't"
-                    });
+                    channel.send("Ok, I won't");
                     break;
 
                 case 'help':
-                    bot.sendMessage({
-                        to: channelID,
-                        message: help
-                    });
+                    channel.send(help);
                     break;
             }
         }
@@ -312,5 +148,5 @@ bot.on('message', function(user, userID, channelID, message, event) {
         console.log(err);
     }
 });
-*/
+
 client.login(auth.token);
