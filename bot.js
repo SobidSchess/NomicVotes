@@ -120,7 +120,7 @@ client.on('message', msg => {
                         var memberCount = countMembers(channel.members);
                         voteMessage += voteCountMessage(voteCount, memberCount);
                         if (voteCount === memberCount) {
-                            voteMessage += "All channel members have voted!";
+                            voteMessage += "\nAll channel members have voted!";
                         }
                         channel.send(voteMessage);
                     } else {
