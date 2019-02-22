@@ -4,8 +4,8 @@ const auth = require('./auth.json');
 const client = new Discord.Client();
 
 var votes = {};
-var help = "Enter this message to vote yes for the issue in this channel:\n!vote yes\nOr to vote no:\n!vote no\n\n" +
-    "the README on this page: https://github.com/SobidSchess/NomicVotes/blob/master/README.md";
+var help = "Examples:\n!vote yes\n!vote no\n!whohasvoted\n!revealvotes\n" +
+    "More info on this page: https://github.com/SobidSchess/NomicVotes/blob/master/README.md";
 
 
 function getUserVoteOnTopic(userID, topicKey, includeVote) {
