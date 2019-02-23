@@ -21,11 +21,11 @@ Also:
 
 Show your vote. Everyone in the channel can see
 
-### Command: !whohasvoted
+### !whohasvoted
 
 Show who has voted in the channel.
 
-### Command: !revealvotes
+### !revealvotes
 
 Reveal everyone's votes to the channel
 
@@ -33,14 +33,14 @@ Reveal everyone's votes to the channel
 
 Deletes your vote in the channel.
 
-### Command: !deletechannelvotes
+### !deletechannelvotes
 
 Deletes all votes in the channel.
 
-### Command: !help
+### !help
 
 Shows a little info on commands and links to this README
 
-### Command: !reassure
+### !reassure
 
 If you want some reassurance on how you voted.
