@@ -4,10 +4,10 @@ const auth = require('./auth.json');
 const client = new Discord.Client();
 
 var votes = {};
-var help = "Examples:\n!vote yes   or !voteyes\n!vote no   or !voteno\n!vote prettyMuchAnythingWithoutSpaces\n!myvote   Reveal your vote to the channel\n" +
-    "!whohasvoted   Show who has voted in the channel, but not their votes\n!revealvotes   Reveal everyone's votes in the channel\n!deletemyvote    Deletes your vote\n" +
-    "!deletechannelvotes  Deletes all the votes in the channel\n" +
-    "!readme Gives a link to the readme page";
+var help = "Examples:\n!vote yes   or !voteyes\n!vote no   or !voteno\n!vote prettyMuchAnythingWithoutSpaces\n!myvote   --Reveal your vote to the channel\n" +
+    "!whohasvoted   --Show who has voted in the channel, but not their votes\n!revealvotes   --Reveal everyone's votes in the channel\n!deletemyvote    --Deletes your vote\n" +
+    "!deletechannelvotes   --Deletes all the votes in the channel\n" +
+    "!readme   --Gives a link to the readme page";
 var readMe = "More info on this page: https://github.com/SobidSchess/NomicVotes/blob/master/README.md";
 
 
