@@ -107,7 +107,7 @@ function handleVote(vote, msg) {
         votes[userID].user = user;
     }
     votes[userID].topics[channelID] = {};
-    votes[userID].topics[channelID].vote = args[0];
+    votes[userID].topics[channelID].vote = vote;
     votes[userID].topics[channelID].timestamp = new Date().toLocaleString("en-US", {timeZone: "America/New_York"});
     msg.delete();
     var voteMessage = "Saved vote for this channel and deleted message from " + user;
