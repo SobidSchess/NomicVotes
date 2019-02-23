@@ -1,6 +1,8 @@
 # NomicVotes
 
-### Command: !vote yourVote
+For all the commands, capitalization doesn't matter
+
+### !vote yourVote
 
 yourVote can be yes or no or anything without spaces.
 The bot will delete the message with your vote in the channel, so your vote will be private
@@ -11,17 +13,13 @@ Examples:
 * !vote no
 * !vote almostAnythingReally
 
-### Command: !myvote
+Also:
+* !voteyes
+* !voteno
+
+### !myvote
 
 Show your vote. Everyone in the channel can see
-
-### Command: !deletemyvote
-
-Deletes your vote in the channel.
-
-### Command: !deletechannelvotes
-
-Deletes all votes in the channel.
 
 ### Command: !whohasvoted
 
@@ -30,6 +28,14 @@ Show who has voted in the channel.
 ### Command: !revealvotes
 
 Reveal everyone's votes to the channel
+
+### !deletemyvote
+
+Deletes your vote in the channel.
+
+### Command: !deletechannelvotes
+
+Deletes all votes in the channel.
 
 ### Command: !help
 
