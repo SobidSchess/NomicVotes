@@ -36,7 +36,7 @@ function getUserVotes(userID) {
 function getTopicVotes(topicKey, messageString, includeVotes) {
     var numVotes = 0;
     for (var userKey in votes) {
-        if (votes[userKey].topics && votes[userKey].topics[topicKey] && votes[userID].topics[topicKey].timestamp && votes[userID].topics[topicKey].vote) {
+        if (votes[userKey].topics && votes[userKey].topics[topicKey] && votes[userKey].topics[topicKey].timestamp && votes[userKey].topics[topicKey].vote) {
             numVotes++;
             messageString = messageString + getUserVoteOnTopic(userKey, topicKey, includeVotes);
         }
