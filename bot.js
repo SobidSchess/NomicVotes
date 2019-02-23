@@ -172,7 +172,7 @@ client.on('message', msg => {
                     break;
 
                 case 'deletemyvote':
-                    if (votes[userID] && votes[userID].topics && otes[userID].topics[channelID]) {
+                    if (votes[userID] && votes[userID].topics && votes[userID].topics[channelID]) {
                         delete votes[userID].topics[channelID];
                         channel.send("Deleted channel vote for " + user);
                     } else {
