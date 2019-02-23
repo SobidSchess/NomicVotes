@@ -4,7 +4,9 @@ const auth = require('./auth.json');
 const client = new Discord.Client();
 
 var votes = {};
-var help = "Examples:\n!vote yes\n!vote no\n!whohasvoted\n!revealvotes\n" +
+var help = "Examples:\n!vote yes   or !voteyes\n!vote no   or !voteno\n!vote prettyMuchAnythingWithoutSpaces\n!myvote   Reveal your vote to the channel\n" +
+    "!whohasvoted   Show who has voted in the channel, but not their votes\n!revealvotes   Reveal everyone's votes in the channel\n!deletemyvote    Deletes your vote\n" +
+    "!deletechannelvotes  Deletes all the votes in the channel\n" +
     "More info on this page: https://github.com/SobidSchess/NomicVotes/blob/master/README.md";
 
 
@@ -21,7 +23,7 @@ function getUserVoteOnTopic(userID, topicKey, includeVote) {
 }
 
 function getUserVotes(userID) {
-    var voteString = "You have no votes saved";
+    var voteString = "You have no vote saved in this channel";
     if (votes[userID]) {
         voteString = votes[userID].user + " votes (user, votes, timestamp)\n";
         for (var topicKey in votes[userID].topics) {
@@ -34,7 +36,7 @@ function getUserVotes(userID) {
 function getTopicVotes(topicKey, messageString, includeVotes) {
     var numVotes = 0;
     for (var userKey in votes) {
-        if (votes[userKey].topics[topicKey]) {
+        if (votes[userKey].topics && votes[userKey].topics[topicKey] && votes[userID].topics[topicKey].timestamp && votes[userID].topics[topicKey].vote) {
             numVotes++;
             messageString = messageString + getUserVoteOnTopic(userKey, topicKey, includeVotes);
         }
@@ -53,7 +55,7 @@ function countMembers(members) {
     var numMembers = 0;
     if (members) {
         members.forEach(function (value, key, map) {
-            if (!value.user.bot) {
+            if (value && value.user && !value.user.bot) {
                 numMembers++;
             }
         });
@@ -68,10 +70,12 @@ function voteCountMessage(votes, members) {
 function getAllTopicVotes(messageString, includeVotes) {
     var completedTopics = [];
     for (var userKey in votes) {
-        for (var topicKey in votes[userKey].topics) {
-            if (!completedTopics.includes(topicKey)) {
-                messageString = getTopicVotes(topicKey, messageString, includeVotes) + "\n";
-                completedTopics.push(topicKey);
+        if (votes[userKey].topics) {
+            for (var topicKey in votes[userKey].topics) {
+                if (!completedTopics.includes(topicKey)) {
+                    messageString = getTopicVotes(topicKey, messageString, includeVotes) + "\n";
+                    completedTopics.push(topicKey);
+                }
             }
         }
     }
@@ -80,7 +84,9 @@ function getAllTopicVotes(messageString, includeVotes) {
 
 function deleteTopicVotes(deleteTopic) {
     for (var userKey in votes) {
-        delete votes[userKey].topics[deleteTopic];
+        if (votes[userKey].topics) {
+            delete votes[userKey].topics[deleteTopic];
+        }
     }
 }
 
@@ -166,8 +172,12 @@ client.on('message', msg => {
                     break;
 
                 case 'deletemyvote':
-                    delete votes[userID].topics[channelID];
-                    channel.send("Deleted channel vote for " + user);
+                    if (votes[userID] && votes[userID].topics && otes[userID].topics[channelID]) {
+                        delete votes[userID].topics[channelID];
+                        channel.send("Deleted channel vote for " + user);
+                    } else {
+                        channel.send("Channel vote not found for " + user);
+                    }
                     break;
 
                 case 'deletechannelvotes':
