@@ -125,11 +125,18 @@ client.on('ready', () => {
     console.log('Logged in');
 });
 
-client.on("error", (e) => console.error(e));
-client.on("warn", (e) => console.warn(e));
-client.on("debug", (e) => console.info(e));
+client.on("error", (e) => {
+    console.log(new Date().toLocaleString());
+    console.error(e);
+});
+
+client.on("warn", (e) => {
+    console.log(new Date().toLocaleString());
+    console.warn(e);
+});
 
 client.on('disconnect', () => {
+    console.log(new Date().toLocaleString());
     console.log('Disconnected');
 });
 
