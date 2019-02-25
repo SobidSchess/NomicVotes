@@ -1,7 +1,5 @@
 # NomicVotes
 
-For all the commands, capitalization doesn't matter
-
 ### !vote yourVote
 
 yourVote can be yes or no or anything without spaces.
@@ -44,3 +42,7 @@ Shows a little info on commands and links to this README
 ### !reassure
 
 If you want some reassurance on how you voted.
+
+### Extra info
+
+For all the commands, capitalization doesn't matter.
